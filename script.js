@@ -1,51 +1,57 @@
 const input = document.getElementById("pdfFiles");
-
 const fileList = document.getElementById("fileList");
-
 const mergeBtn = document.getElementById("mergeBtn");
-
-const status = document.getElementById("status");
-
 const outputName = document.getElementById("outputName");
-
 const clearBtn = document.getElementById("clearBtn");
-
 const fileCount = document.getElementById("fileCount");
+const status = document.getElementById("status");
 
 let selectedFiles = [];
 
-// ----------------------------
+// ---------------------------
+// Update Status
+// ---------------------------
 
-function renderFiles(){
+function setStatus(message, color = "#0d6efd") {
+    if (status) {
+        status.innerHTML = message;
+        status.style.color = color;
+    }
+}
+
+// ---------------------------
+// Render File List
+// ---------------------------
+
+function renderFiles() {
 
     fileList.innerHTML = "";
 
-    fileCount.innerHTML = `${selectedFiles.length} File${selectedFiles.length!=1?"s":""}`;
+    fileCount.textContent =
+        `${selectedFiles.length} File${selectedFiles.length !== 1 ? "s" : ""}`;
 
-    if(selectedFiles.length===0){
+    if (selectedFiles.length === 0) {
 
-        fileList.innerHTML="No files selected.";
+        fileList.innerHTML =
+            "<p style='color:gray'>No files selected.</p>";
 
         return;
-
     }
 
-    selectedFiles.forEach((file,index)=>{
+    selectedFiles.forEach((file, index) => {
 
-        const div=document.createElement("div");
+        const div = document.createElement("div");
 
-        div.className="file";
+        div.className = "file";
 
-        div.innerHTML=`
+        div.innerHTML = `
 
             <span>📄 ${file.name}</span>
 
-            <button class="remove-btn"
-
-            onclick="removeFile(${index})">
-
-            ❌
-
+            <button
+                class="remove-btn"
+                onclick="removeFile(${index})">
+                ❌
             </button>
 
         `;
@@ -56,9 +62,11 @@ function renderFiles(){
 
 }
 
-// ----------------------------
+// ---------------------------
+// Remove File
+// ---------------------------
 
-function removeFile(index){
+window.removeFile = function(index){
 
     selectedFiles.splice(index,1);
 
@@ -66,26 +74,33 @@ function removeFile(index){
 
 }
 
-// ----------------------------
+// ---------------------------
+// Clear All
+// ---------------------------
 
 clearBtn.addEventListener("click",()=>{
 
     selectedFiles=[];
 
+    input.value="";
+
     renderFiles();
+
+    setStatus("");
 
 });
 
-// ----------------------------
+// ---------------------------
+// Add Files
+// ---------------------------
 
 input.addEventListener("change",()=>{
 
     for(const file of input.files){
 
-        const exists=selectedFiles.some(f=>
+        const exists = selectedFiles.some(f =>
 
             f.name===file.name &&
-
             f.size===file.size
 
         );
@@ -104,21 +119,23 @@ input.addEventListener("change",()=>{
 
 });
 
-// ----------------------------
+// ---------------------------
+// Merge PDFs
+// ---------------------------
 
 mergeBtn.addEventListener("click",async()=>{
 
     if(selectedFiles.length<2){
 
-        alert("Please select at least 2 PDFs.");
+        alert("Please select at least 2 PDF files.");
 
         return;
 
     }
 
-    status.innerHTML="Uploading...";
+    setStatus("Uploading PDFs...");
 
-    const formData=new FormData();
+    const formData = new FormData();
 
     selectedFiles.forEach(file=>{
 
@@ -126,51 +143,64 @@ mergeBtn.addEventListener("click",async()=>{
 
     });
 
-    formData.append("filename",outputName.value);
+    formData.append(
+        "filename",
+        outputName.value || "merged"
+    );
 
     try{
 
-        const response=await fetch("https://pdfmerge-8iy9.onrender.com/merge",{
+        const response = await fetch(
+            "https://pdfmerge-8iy9.onrender.com/merge",
+            {
 
-            method:"POST",
+                method:"POST",
 
-            body:formData
+                body:formData
 
-        });
+            }
+        );
 
-        if(response.ok){
+        if(!response.ok){
 
-            const blob=await response.blob();
-
-            const url=window.URL.createObjectURL(blob);
-
-            const a=document.createElement("a");
-
-            a.href=url;
-
-            a.download=(outputName.value||"merged")+".pdf";
-
-            document.body.appendChild(a);
-
-            a.click();
-
-            a.remove();
-
-            status.innerHTML="✅ Merge Successful";
+            throw new Error("Server Error");
 
         }
 
-        else{
+        const blob = await response.blob();
 
-            status.innerHTML="❌ Merge Failed";
+        const url = window.URL.createObjectURL(blob);
 
-        }
+        const a = document.createElement("a");
+
+        a.href = url;
+
+        a.download =
+            (outputName.value || "merged") + ".pdf";
+
+        document.body.appendChild(a);
+
+        a.click();
+
+        a.remove();
+
+        window.URL.revokeObjectURL(url);
+
+        setStatus(
+            "✅ PDF Merged Successfully!",
+            "green"
+        );
 
     }
 
-    catch{
+    catch(error){
 
-        status.innerHTML="❌ Cannot connect to Flask.";
+        console.error(error);
+
+        setStatus(
+            "❌ Failed to merge PDF.",
+            "red"
+        );
 
     }
 
