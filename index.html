@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PDF Merger Pro</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+
+        <div class="header">
+
+            <div class="logo">
+
+                <i class="fa-solid fa-file-pdf"></i>
+
+                <h1>PDF Merger Pro</h1>
+
+            </div>
+
+            <p class="subtitle">
+                Merge multiple PDF files into one document.
+            </p>
+
+        </div>
+
+
+        <div class="upload-box">
+
+            <label for="pdfFiles" class="upload-label">
+
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+
+                <span>Choose PDF Files</span>
+
+            </label>
+
+            <input
+                type="file"
+                id="pdfFiles"
+                accept=".pdf"
+                multiple>
+
+            <small>
+                You can select files multiple times.
+            </small>
+
+        </div>
+
+
+
+        <div class="rename-box">
+
+            <label for="outputName">
+
+                Output File Name
+
+            </label>
+
+            <input
+                type="text"
+                id="outputName"
+                placeholder="merged"
+                value="merged">
+
+        </div>
+
+        <button id="mergeBtn">
+
+            <i class="fa-solid fa-layer-group"></i>
+
+            Merge PDFs
+
+        </button>
+
+
+        <div class="files-header">
+
+            <h2>
+
+                Selected PDFs
+            </h2>
+
+            <span id="fileCount">
+
+                0 Files
+
+            </span>
+
+        </div>
+
+        <div id="fileList">
+
+        </div>
+
+
+
+        <button id="clearBtn">
+
+            <i class="fa-solid fa-trash"></i>
+
+
+
+        </button>
+
+        <footer>
+
+            <hr>
+
+            <p>
+
+                Made with ❤️ by
+
+                <span class="developer">
+
+                    Sahil Bansfor
+
+                </span>
+
+            </p>
+
+            <small>
+
+                PDF Merger Pro • Version 1.0
+
+            </small>
+
+        </footer>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
