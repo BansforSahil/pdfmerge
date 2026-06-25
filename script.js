@@ -130,7 +130,7 @@ mergeBtn.addEventListener("click",async()=>{
 
     try{
 
-        const response=await fetch("http://127.0.0.1:5000/merge",{
+        const response=await fetch("https://pdfmerge-8iy9.onrender.com/merge",{
 
             method:"POST",
 
